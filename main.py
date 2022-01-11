@@ -5,6 +5,11 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 
+st.set_page_config(
+    page_title= 'Analysis of Dietary Data',
+    page_icon='🍴'
+)
+
 st.title('Visualisation of Dietary Data')   
 head = st.container()
 c1 = st.container()
@@ -109,7 +114,7 @@ with head:
 
     with c2:
         st.header('Frequency of Consumption of Food Groups')
-        num = st.selectbox('Number of Days', ([i for i in range(1, 29)]))
+        num = st.selectbox('Number of Days', (arange(1, 29)))
         fig2 = graph2(num)
         st.write(fig2)
 
@@ -119,7 +124,7 @@ with head:
         st.write('In this graphic, a color of red indicates that the diversity of a person\'s diet is below 4 groups. A color of yellow indicates that the diet is restricted to 5 or 6 groups. A color of green indicates a diverse diet that includes more than 6 groups.')
         st.write(fig3)
         with st.expander('People in Red Zone'):
-            st.write(pd.Series(red, index = np.arange(1, len(red) + 1)), name = 'Aadhaar Numbers')
+            st.write(pd.Series(red, index = arange(1, len(red) + 1)), name = 'Aadhaar Numbers')
         with st.expander('People in Yellow Zone'):
-            st.write(pd.Series(yellow, index = np.arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
+            st.write(pd.Series(yellow, index = arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
 
