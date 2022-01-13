@@ -103,7 +103,7 @@ def graph3():
 
     fig.update_layout(title_text = 'Dietary Diversity')
 
-    return fig, red, yellow
+    return fig, red, yellow, green
 
 with head:
     with c1:        
@@ -118,7 +118,7 @@ with head:
         st.write(fig2)
 
     with c3:
-        fig3, red, yellow = graph3()
+        fig3, red, yellow, green = graph3()
         st.header('Exploration of Dietary Diversity')
         st.write('In this graphic, a color of red indicates that the diversity of a person\'s diet is below 4 groups. A color of yellow indicates that the diet is restricted to 5 or 6 groups. A color of green indicates a diverse diet that includes more than 6 groups.')
         st.write(fig3)
@@ -126,4 +126,6 @@ with head:
             st.write(pd.Series(red, index = arange(1, len(red) + 1)), name = 'Aadhaar Numbers')
         with st.expander('People in Yellow Zone'):
             st.write(pd.Series(yellow, index = arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
+        with st.expander('People in Green Zone'):
+            st.write(pd.Series(green, index = arange(1, len(green) + 1)), name = 'Aadhaar Numbers')
 
