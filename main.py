@@ -13,9 +13,14 @@ st.title('Visualisation of Dietary Data')
 head = st.container()
 c1 = st.container()
 c2 = st.container()
+c4 = st.container()
 c3 = st.container()
 
+
 dietary = pd.read_csv('./Dietary.csv')
+dietary['Date'] = pd.to_datetime(dietary['Date'], infer_datetime_format=True)
+dietary['Day'] = dietary['Date'].dt.dayofweek
+
 
 types = ['Grains', 'Pulses', 'Other Fruits',
         'Leafy Vegetables', 'Other Vegetables', 'Dairy',
@@ -105,6 +110,18 @@ def graph3():
 
     return fig, red, yellow, green
 
+def graph4():
+    delta = pd.DataFrame(columns = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+
+    for ftype in types:
+        days = [i for i in range(7)]
+        change = []
+        for day in range(7):
+            change.append(dietary[dietary['Day'] == day][ftype].sum())
+        delta.loc[ftype] = change
+
+    return px.line(delta.transpose(), title = 'Variation by Day of the Week', markers = True)
+
 with head:
     with c1:        
         st.header('Consumption Tally of Food Groups')
@@ -117,6 +134,11 @@ with head:
         fig2 = graph2(num)
         st.write(fig2)
 
+    with c4:
+        st.header('Variation in Food Intake by Day of the Week')
+        fig4 = graph4()
+        st.write(fig4)
+
     with c3:
         fig3, red, yellow, green = graph3()
         st.header('Exploration of Dietary Diversity')
@@ -128,4 +150,5 @@ with head:
             st.write(pd.Series(yellow, index = arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
         with st.expander('People in Green Zone'):
             st.write(pd.Series(green, index = arange(1, len(green) + 1)), name = 'Aadhaar Numbers')
+        
 
