@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-import numpy as np
+from math import ceil
 
 st.set_page_config(
     page_title= 'Analysis of Dietary Data',
@@ -15,6 +15,7 @@ head = st.container()
 c1 = st.container()
 c2 = st.container()
 c4 = st.container()
+c5 = st.container()
 c3 = st.container()
 
 
@@ -111,6 +112,36 @@ def graph3():
 
     return fig, red, yellow, green
 
+def graph5():
+    dietary['Sum'] = dietary[['Grains', 'Pulses', 'Other Fruits', 'Leafy Vegetables',
+       'Other Vegetables', 'Dairy', 'Meat, Poultry and Fish', 'Vitamin A Rich',
+       'Nuts and Seeds', 'Eggs']].sum(axis =1)
+    red = []
+    yellow = []
+    green = []
+
+    for i in dietary['Aadhaar'].unique():
+        temp = dietary[dietary['Aadhaar'] == i]
+
+        k = ceil(temp['Sum'].mean())
+
+        if k in range(1, 5):
+            red.append(i)
+        elif k in range(5, 7):
+            yellow.append(i)
+        elif k in range(7, 11):
+            green.append(i)
+
+    fig = go.Figure(data = [go.Bar(
+        x = ['Dietary Diversity : 1-4', 'Dietary Diversity : 5-6', 'Dietary Diversity : 7-10'],
+        y = [len(red), len(yellow), len(green)],
+        marker_color = ['red', 'yellow', 'green']
+    )])
+
+    fig.update_layout(title_text = 'Food Groups Consumed, Ceiling of Mean')
+
+    return fig
+
 def graph4():
     delta = pd.DataFrame(columns = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
 
@@ -139,6 +170,11 @@ with head:
         st.header('Variation in Food Intake by Day of the Week')
         fig4 = graph4()
         st.write(fig4)
+
+    with c5:
+        st.header('Average Number of Food Groups Consumed')
+        fig5 = graph5()
+        st.write(fig5)
 
     with c3:
         fig3, red, yellow, green = graph3()
