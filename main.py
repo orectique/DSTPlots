@@ -11,17 +11,29 @@ st.set_page_config(
 )
 
 st.title('Visualisation of Dietary Data')   
-head = st.container()
+
 c1 = st.container()
 c2 = st.container()
 c4 = st.container()
-c5 = st.container()
 c3 = st.container()
+
+c5 = st.container()
 
 
 dietary = pd.read_csv('./Dietary.csv')
 dietary['Date'] = pd.to_datetime(dietary['Date'], infer_datetime_format=True)
 dietary['Day'] = dietary['Date'].dt.dayofweek
+
+
+daysofweek = {
+    'Monday': 0,
+    'Tuesday': 1,
+    'Wednesday': 2,
+    'Thursday': 3,
+    'Friday': 4,
+    'Saturday': 5,
+    'Sunday': 6
+}
 
 
 types = ['Grains', 'Pulses', 'Other Fruits',
@@ -120,7 +132,6 @@ def graph4():
     delta = pd.DataFrame(columns = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
 
     for ftype in types:
-        days = [i for i in range(7)]
         change = []
         for day in range(7):
             change.append(dietary[dietary['Day'] == day][ftype].sum())
@@ -128,39 +139,57 @@ def graph4():
 
     return px.line(delta.transpose(), title = 'Variation by Day of the Week', markers = True)
 
-with head:
-    with c1:        
-        st.header('Consumption Tally of Food Groups')
-        fig1 = graph1()
-        st.write(fig1)
+def graph5(data, featureA, featureB, day):
 
-    with c2:
-        st.header('Frequency of Consumption of Food Groups')
-        num = st.selectbox('Number of Days', (arange(1, 29)))
-        fig2 = graph2(num)
-        st.write(fig2)
+    data = data[data['Day'] == daysofweek[day]]
+    data = data[[featureA, featureB]].replace({0: 'Not Consumed', 1: 'Consumed'}) 
 
-    with c4:
-        st.header('Variation in Food Intake by Day of the Week')
-        fig4 = graph4()
-        st.write(fig4)
+    lenData = len(data)
+    title = f'Relating {featureA} and {featureB} on {day}, N = {lenData}'
+    
+    return px.bar(pd.crosstab(data[featureA], data[featureB]), color=featureB, title = title, width = 1000, orientation = 'h')
 
-    with c3:
-        fig3, red1, red2, yellow, green1, green2 = graph3()
-        st.header('Exploration of Dietary Diversity')
-        st.write('In this graphic, a color of red indicates that the average diversity of a person\'s diet is below 4 groups. A color of yellow indicates that the diet is restricted to 5 or 6 groups. A color of green indicates a diverse diet that includes more than 6 groups.')
-        st.write(fig3)
-        with st.expander('People in Red Zone - 1-2'):
-            st.write(pd.Series(red1, index = arange(1, len(red1) + 1)), name = 'Aadhaar Numbers')
-        with st.expander('People in Red Zone - 3-4'):
-            st.write(pd.Series(red2, index = arange(1, len(red2) + 1)), name = 'Aadhaar Numbers')
-        with st.expander('People in Yellow Zone - 5-6'):
-            st.write(pd.Series(yellow, index = arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
-        with st.expander('People in Green Zone - 7-9'):
-            st.write(pd.Series(green1, index = arange(1, len(green1) + 1)), name = 'Aadhaar Numbers')
-        with st.expander('People in Green Zone - 10-11'):
-            st.write(pd.Series(green2, index = arange(1, len(green2) + 1)), name = 'Aadhaar Numbers')
-    with c5:
-        st.header('Exploration of Dietary Habits of Consumers of Junk Food')
-        fig5 
+with c1:        
+    st.header('Consumption Tally of Food Groups')
+    fig1 = graph1()
+    st.write(fig1)
+
+with c2:
+    st.header('Frequency of Consumption of Food Groups')
+    num = st.selectbox('Number of Days', (arange(1, 29)))
+    fig2 = graph2(num)
+    st.write(fig2)
+
+with c4:
+    st.header('Variation in Food Intake by Day of the Week')
+    fig4 = graph4()
+    st.write(fig4)
+
+with c3:
+    fig3, red1, red2, yellow, green1, green2 = graph3()
+    st.header('Exploration of Dietary Diversity')
+    st.write('In this graphic, a color of red indicates that the average diversity of a person\'s diet is below 4 groups. A color of yellow indicates that the diet is restricted to 5 or 6 groups. A color of green indicates a diverse diet that includes more than 6 groups.')
+    st.write(fig3)
+    with st.expander('People in Red Zone - 1-2'):
+        st.write(pd.Series(red1, index = arange(1, len(red1) + 1)), name = 'Aadhaar Numbers')
+    with st.expander('People in Red Zone - 3-4'):
+        st.write(pd.Series(red2, index = arange(1, len(red2) + 1)), name = 'Aadhaar Numbers')
+    with st.expander('People in Yellow Zone - 5-6'):
+        st.write(pd.Series(yellow, index = arange(1, len(yellow) + 1)), name = 'Aadhaar Numbers')
+    with st.expander('People in Green Zone - 7-9'):
+        st.write(pd.Series(green1, index = arange(1, len(green1) + 1)), name = 'Aadhaar Numbers')
+    with st.expander('People in Green Zone - 10-11'):
+        st.write(pd.Series(green2, index = arange(1, len(green2) + 1)), name = 'Aadhaar Numbers')
+with c5:
+    st.header('Comparing Consumption of Food Groups')
+    with st.expander('Comparing Consumption of Food Groups'):
+        with st.form('compareForm'):
+            features = st.multiselect('Food Groups', types)
+
+            day = st.selectbox('Day', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+
+            submitted = st.form_submit_button('Submit')
+
+            if submitted:
+                st.write(graph5(dietary, features[0], features[1], day))
 
