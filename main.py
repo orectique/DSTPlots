@@ -160,5 +160,7 @@ with head:
             st.write(pd.Series(green1, index = arange(1, len(green1) + 1)), name = 'Aadhaar Numbers')
         with st.expander('People in Green Zone - 10-11'):
             st.write(pd.Series(green2, index = arange(1, len(green2) + 1)), name = 'Aadhaar Numbers')
-        
+    with c5:
+        st.header('Exploration of Dietary Habits of Consumers of Junk Food')
+        fig5 
 
