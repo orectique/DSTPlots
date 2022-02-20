@@ -182,7 +182,7 @@ with c3:
         st.write(pd.Series(green2, index = arange(1, len(green2) + 1)), name = 'Aadhaar Numbers')
 with c5:
     st.header('Comparing Consumption of Food Groups')
-    with st.expander('Comparing Consumption of Food Groups'):
+    with st.expander('Filters'):
         with st.form('compareForm'):
             features = st.multiselect('Food Groups', types)
 
