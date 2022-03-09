@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 from math import ceil
+from operator import truediv
 
 st.set_page_config(
     page_title= 'Analysis of Dietary Data',
@@ -133,11 +134,15 @@ def graph4():
 
     for ftype in types:
         change = []
+        dayCount = [len(dietary[dietary.Day == day]) for day in range(7)]
         for day in range(7):
             change.append(dietary[dietary['Day'] == day][ftype].sum())
-        delta.loc[ftype] = change
 
-    return px.line(delta.transpose(), title = 'Variation by Day of the Week', markers = True)
+        countScaled = list(map(truediv, change, dayCount))
+        
+        delta.loc[ftype] = [i*100 for i in countScaled]
+
+    return px.line(delta.transpose(), title = 'Variation by Day of the Week, Scaled', markers = True)
 
 def graph5(data, featureA, featureB, day):
 
