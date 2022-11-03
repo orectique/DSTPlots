@@ -5,10 +5,6 @@ import pandas as pd
 import plotly.graph_objects as go
 from math import ceil
 from operator import truediv
-import json
-import time
-import base64
-import requests
 
 st.set_page_config(
     page_title= 'Analysis of Dietary Data',
@@ -23,17 +19,6 @@ c4 = st.container()
 c3 = st.container()
 
 c5 = st.container()
-
-def fetch_FoodGroups():
-    url = 'http://115.243.144.151/seed/fetchAllFood.php'
-    data_fetched = json.loads(requests.post(url).text)
-    data_dict = data_fetched['datalist']
-    food_df = pd.DataFrame.from_dict(data_dict)
-    food_df.to_csv('Dietary.csv', index=False,
-                   header=['Aadhaar', 'Date', 'Grains', 'Pulses', 'Other Fruits', 'Leafy Vegetables','Other Vegetables', 'Dairy', 'Meat, Poultry and Fish', 'Vitamin A Rich','Nuts and Seeds', 'Eggs', 'Junk Foods'])
-
-
-fetch_FoodGroups()
 
 
 dietary = pd.read_csv('./Dietary.csv')
